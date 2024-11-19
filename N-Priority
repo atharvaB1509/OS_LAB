@@ -1,0 +1,70 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+struct Process {
+    int pid, at, bt, priority, ft, tat, wt;
+};
+
+bool comparePriority(Process a, Process b) {
+    return a.priority < b.priority || (a.priority == b.priority && a.at < b.at);
+}
+
+void calculateNonPreemptivePriority(vector<Process> &processes) {
+    int n = processes.size(), time = 0;
+
+    sort(processes.begin(), processes.end(), [](Process a, Process b) {
+        return a.at < b.at;
+    });
+
+    for (int i = 0; i < n; i++) {
+        sort(processes.begin() + i, processes.end(), comparePriority);
+        if (time < processes[i].at) time = processes[i].at;
+        processes[i].ft = time + processes[i].bt;
+        time = processes[i].ft;
+        processes[i].tat = processes[i].ft - processes[i].at;
+        processes[i].wt = processes[i].tat - processes[i].bt;
+    }
+}
+
+void displayProcesses(const vector<Process> &processes) {
+    cout << "Processes  Arrival  Burst  Priority  Finish  Turnaround  Waiting\n";
+    for (const auto &p : processes) {
+        cout << "   " << p.pid << "\t    " << p.at << "\t  "
+             << p.bt << "\t  " << p.priority << "\t     " << p.ft << "\t     "
+             << p.tat << "\t     " << p.wt << "\n";
+    }
+}
+
+int main() {
+    int n;
+    cout << "Enter the number of processes: ";
+    cin >> n;
+
+    vector<Process> processes(n);
+    for (int i = 0; i < n; i++) {
+        processes[i].pid = i + 1;
+        cout << "Process " << processes[i].pid << " Arrival Time: ";
+        cin >> processes[i].at;
+        cout << "Process " << processes[i].pid << " Burst Time: ";
+        cin >> processes[i].bt;
+        cout << "Process " << processes[i].pid << " Priority: ";
+        cin >> processes[i].priority;
+    }
+
+    calculateNonPreemptivePriority(processes);
+
+    cout << "\nNon-Preemptive Priority Scheduling Results:\n";
+    displayProcesses(processes);
+
+    float total_wt = 0, total_tat = 0;
+    for (const auto &p : processes) {
+        total_wt += p.wt;
+        total_tat += p.tat;
+    }
+    cout << "\nAverage Waiting Time = " << total_wt / n;
+    cout << "\nAverage Turnaround Time = " << total_tat / n << endl;
+
+    return 0;
+}
