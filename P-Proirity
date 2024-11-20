@@ -55,15 +55,21 @@ int main() {
     cin >> n;
 
     vector<Process> processes(n);
+
+    cout << "\nEnter the Arrival times for all processes (space-separated):\n";
     for (int i = 0; i < n; i++) {
-        processes[i].pid = i + 1;
-        cout << "Process " << processes[i].pid << " Arrival Time: ";
         cin >> processes[i].at;
-        cout << "Process " << processes[i].pid << " Burst Time: ";
+    }
+
+    cout << "\nEnter the Burst times for all processes (space-separated):\n";
+    for (int i = 0; i < n; i++) {
         cin >> processes[i].bt;
-        cout << "Process " << processes[i].pid << " Priority: ";
-        cin >> processes[i].priority;
         processes[i].remaining_bt = processes[i].bt;
+    }
+
+    cout << "\nEnter the Priority values for all processes (space-separated):\n";
+    for (int i = 0; i < n; i++) {
+        cin >> processes[i].priority;
     }
 
     calculatePreemptivePriority(processes);
