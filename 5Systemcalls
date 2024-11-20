@@ -1,0 +1,46 @@
+#include <iostream>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <cstdlib>
+
+using namespace std;
+
+int main() {
+    pid_t pid;
+    int file_desc;
+    char buffer[100];
+
+    // fork system call
+    pid = fork();
+    if (pid == 0) {
+        cout << "Child Process: PID = " << getpid() << endl;
+    } else {
+        cout << "Parent Process: PID = " << getpid() << ", Child PID = " << pid << endl;
+    }
+
+    // getpid system call
+    cout << "Process ID: " << getpid() << endl;
+
+    // open system call
+    file_desc = open("example.txt", O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR);
+    if (file_desc < 0) {
+        cerr << "Error opening file" << endl;
+        exit(1);
+    }
+    cout << "File opened with file descriptor: " << file_desc << endl;
+
+    // write system call
+    const char* text = "Hello, System Calls!";
+    write(file_desc, text, strlen(text));
+
+    // close system call
+    close(file_desc);
+    cout << "File closed" << endl;
+
+    // exit system call
+    exit(0);
+
+    return 0;
+}
